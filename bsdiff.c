@@ -12,10 +12,12 @@
  | obtain it through the world-wide-web, please send a note to          |
  | license@php.net so we can mail you a copy immediately.               |
  +----------------------------------------------------------------------+
- | Author:                                                              |
+ | Author: rainkide@gmail.com                                           |
  +----------------------------------------------------------------------+
  */
-
+//
+//source file from : http://www.daemonology.net/bsdiff
+//
 /* $Id$ */
 
 #ifdef HAVE_CONFIG_H
