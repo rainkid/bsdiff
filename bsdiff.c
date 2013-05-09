@@ -588,7 +588,7 @@ PHP_MINIT_FUNCTION( bsdiff) {
 	 REGISTER_INI_ENTRIES();
 	 */
 	zend_class_entry ce;
-	INIT_CLASS_ENTRY(ce, "BSDiff", bsdiff_functions);
+	INIT_CLASS_ENTRY(ce, "bsdiff", bsdiff_functions);
 
 	bsdiff_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
 	return SUCCESS;
