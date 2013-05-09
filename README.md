@@ -1,14 +1,19 @@
-a php exteions for bsdiff : http://www.daemonology.net/bsdiff/
+a php exteions for bsdiff
 ======
 
-Install : 
-phpize
-./configure --with-php-config=/usr/bin/php-config
-make
-make install
+Install:
+======
+    phpize 
+    ./configure --with-php-config=/usr/bin/php-config 
+    make  
+    make install 
 
 Example:
-<?php
+======
+    <?php     
+    $bsdiff = new bsdiff(); 
+    $bsdiff->diff($old_file, $new_file, $diff_file); 
+    ?> 
 
-$bsdiff = new bsdiff();
-$bsdiff->diff($old_file, $new_file, $diff_file);
+======
+http://www.daemonology.net/bsdiff/ 
