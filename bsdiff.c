@@ -15,6 +15,32 @@
  | Author: rainkide@gmail.com                                           |
  +----------------------------------------------------------------------+
  */
+
+/*-
+ * Copyright 2003-2005 Colin Percival
+ * All rights reserved
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted providing that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
 //
 //source file from : http://www.daemonology.net/bsdiff
 //
@@ -48,17 +74,7 @@ static int le_bsdiff;
 //int t_start = 0,t_end = 0;
 zend_class_entry * bsdiff_ce;
 
-PHP_METHOD( bsdiff, __construct) {
-	/*php_printf("%s", "starting creat data.\n");
-	 t_start = time((time_t*)NULL);*/
-}
-
-PHP_METHOD( bsdiff, __destruct) {
-	/*t_end = time((time_t*)NULL);
-	 php_printf("data creating completed, used %ds\n", (t_end - t_start));*/
-}
-
-#define MIN(x,y) (((x)<(y)) ? (x) : (y))
+#define BSDIFF_MIN(x,y) (((x)<(y)) ? (x) : (y))
 
 static void split(off_t *I, off_t *V, off_t start, off_t len, off_t h) {
 	off_t i, j, k, x, tmp, jj, kk;
@@ -217,7 +233,7 @@ static off_t search(off_t *I, u_char *old, off_t oldsize, u_char *new,
 	};
 
 	x = st + (en - st) / 2;
-	if (memcmp(old + I[x], new, MIN(oldsize-I[x],newsize)) < 0) {
+	if (memcmp(old + I[x], new, BSDIFF_MIN(oldsize-I[x],newsize)) < 0) {
 		return search(I, old, oldsize, new, newsize, x, en, pos);
 	} else {
 		return search(I, old, oldsize, new, newsize, st, x, pos);
@@ -301,14 +317,12 @@ PHP_METHOD( bsdiff, diff) {
 		(lseek(fd,0,SEEK_SET)!=0) ||
 		(read(fd,old,oldsize)!=oldsize) ||
 		(close(fd)==-1)) {
-//		err(1,"%s",old_file);
 		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error:%s", old_file);
 		RETURN_FALSE;
 	}
 
 	if(((I=malloc((oldsize+1)*sizeof(off_t)))==NULL) ||
 		((V=malloc((oldsize+1)*sizeof(off_t)))==NULL)) {
-//		err(1,NULL);
 		zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Internal error", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
@@ -328,7 +342,6 @@ PHP_METHOD( bsdiff, diff) {
 
 	if(((db=malloc(newsize+1))==NULL) ||
 		((eb=malloc(newsize+1))==NULL)) {
-//		err(1,NULL);
 		zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Internal error", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
@@ -336,7 +349,6 @@ PHP_METHOD( bsdiff, diff) {
 	eblen=0;
 	/* Create the patch file */
 	if ((pf = fopen(diff_file, "w")) == NULL) {
-//		err(1, "%s", diff_file);
 		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error: can not creat file(%s)", diff_file);
 		RETURN_FALSE;
 	}
@@ -535,9 +547,9 @@ PHP_METHOD( bsdiff, diff) {
  */
 const zend_function_entry bsdiff_functions[] = {
 //	PHP_FE(confirm_bsdiff_compiled,	NULL)		/* For testing, remove later. */
-	PHP_ME(bsdiff, __construct, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
-	PHP_ME(bsdiff, __destruct, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_DTOR)
+
 	PHP_ME(bsdiff, diff, NULL, ZEND_ACC_PUBLIC)
+
 	PHP_FE_END /* Must be the last line in bsdiff_functions[] */
 };
 /* }}} */

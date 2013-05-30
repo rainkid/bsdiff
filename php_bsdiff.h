@@ -42,8 +42,6 @@ PHP_RINIT_FUNCTION(bsdiff);
 PHP_RSHUTDOWN_FUNCTION(bsdiff);
 PHP_MINFO_FUNCTION(bsdiff);
 
-/*PHP_FUNCTION(confirm_bsdiff_compiled);*/	/* For testing, remove later. */
-
 /* 
   	Declare any global variables you may need between the BEGIN
 	and END macros here:     
