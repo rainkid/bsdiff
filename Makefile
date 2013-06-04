@@ -4,13 +4,14 @@ top_srcdir = /home/rainkid/workspace/bsdiff-extension
 top_builddir = /home/rainkid/workspace/bsdiff-extension
 EGREP = /bin/grep -E
 SED = /bin/sed
-CONFIGURE_COMMAND = './configure' '--with-php-config=/usr/bin/php-config'
-CONFIGURE_OPTIONS = '--with-php-config=/usr/bin/php-config'
+CONFIGURE_COMMAND = './configure'
+CONFIGURE_OPTIONS =
 SHLIB_SUFFIX_NAME = so
 SHLIB_DL_SUFFIX_NAME = so
 ZEND_EXT_TYPE = zend_extension
-RE2C = exit 0;
+RE2C = re2c
 AWK = gawk
+BSDIFF_SHARED_LIBADD =
 shared_objects_bsdiff = bsdiff.lo
 PHP_PECL_EXTENSION = bsdiff
 PHP_MODULES = $(phplibdir)/bsdiff.la

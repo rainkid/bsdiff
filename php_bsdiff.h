@@ -21,6 +21,14 @@
 #ifndef PHP_BSDIFF_H
 #define PHP_BSDIFF_H
 
+#include <sys/types.h>
+#include <bzlib.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
 extern zend_module_entry bsdiff_module_entry;
 #define phpext_bsdiff_ptr &bsdiff_module_entry
 

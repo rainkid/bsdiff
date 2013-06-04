@@ -56,14 +56,6 @@
 #include "php_bsdiff.h"
 #include "zend_exceptions.h"
 
-#include <sys/types.h>
-#include <bzlib.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
 /* If you declare any globals in php_bsdiff.h uncomment this:
  ZEND_DECLARE_MODULE_GLOBALS(bsdiff)
  */
@@ -331,14 +323,17 @@ PHP_METHOD( bsdiff, diff) {
 
 	free(V);
 
-/* Allocate newsize+1 bytes instead of newsize bytes to ensure
+	/* Allocate newsize+1 bytes instead of newsize bytes to ensure
 		that we never try to malloc(0) and get a NULL pointer */
 	if(((fd=open(new_file,O_RDONLY,0))<0) ||
 		((newsize=lseek(fd,0,SEEK_END))==-1) ||
 		((new=malloc(newsize+1))==NULL) ||
 		(lseek(fd,0,SEEK_SET)!=0) ||
 		(read(fd,new,newsize)!=newsize) ||
-		(close(fd)==-1)) err(1,"%s",new_file);
+		(close(fd)==-1)) {
+		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error:%s", new_file);
+		RETURN_FALSE;
+	}
 
 	if(((db=malloc(newsize+1))==NULL) ||
 		((eb=malloc(newsize+1))==NULL)) {
@@ -348,8 +343,8 @@ PHP_METHOD( bsdiff, diff) {
 	dblen=0;
 	eblen=0;
 	/* Create the patch file */
-	if ((pf = fopen(diff_file, "w")) == NULL) {
-		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error: can not creat file(%s)", diff_file);
+	if ((pf = fopen(diff_file, "w+")) == NULL) {
+		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error: can not create file(%s)", diff_file);
 		RETURN_FALSE;
 	}
 
@@ -466,6 +461,7 @@ PHP_METHOD( bsdiff, diff) {
 		};
 	};
 	BZ2_bzWriteClose(&bz2err, pfbz2, 0, NULL, NULL);
+
 	if (bz2err != BZ_OK) {
 		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "BZ2_bzWriteClose, bz2err = %d", bz2err);
 		RETURN_FALSE;
