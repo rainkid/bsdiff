@@ -4,8 +4,8 @@ top_srcdir = /home/rainkid/workspace/bsdiff-extension
 top_builddir = /home/rainkid/workspace/bsdiff-extension
 EGREP = /bin/grep -E
 SED = /bin/sed
-CONFIGURE_COMMAND = './configure'
-CONFIGURE_OPTIONS =
+CONFIGURE_COMMAND = './configure' '--with-php-config=/usr/bin/php-config'
+CONFIGURE_OPTIONS = '--with-php-config=/usr/bin/php-config'
 SHLIB_SUFFIX_NAME = so
 SHLIB_DL_SUFFIX_NAME = so
 ZEND_EXT_TYPE = zend_extension

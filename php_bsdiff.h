@@ -50,6 +50,9 @@ PHP_RINIT_FUNCTION(bsdiff);
 PHP_RSHUTDOWN_FUNCTION(bsdiff);
 PHP_MINFO_FUNCTION(bsdiff);
 
+PHP_FUNCTION(bsdiff_diff);
+PHP_FUNCTION(bsdiff_patch);
+
 /* 
   	Declare any global variables you may need between the BEGIN
 	and END macros here:     

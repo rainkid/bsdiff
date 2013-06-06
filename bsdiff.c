@@ -63,211 +63,180 @@
 /* True global resources - no need for thread safety here */
 static int le_bsdiff;
 
-//int t_start = 0,t_end = 0;
-zend_class_entry * bsdiff_ce;
-
 #define BSDIFF_MIN(x,y) (((x)<(y)) ? (x) : (y))
 
-static void split(off_t *I, off_t *V, off_t start, off_t len, off_t h) {
-	off_t i, j, k, x, tmp, jj, kk;
+static void split(off_t *I,off_t *V,off_t start,off_t len,off_t h)
+{
+	off_t i,j,k,x,tmp,jj,kk;
 
-	if (len < 16) {
-		for (k = start; k < start + len; k += j) {
-			j = 1;
-			x = V[I[k] + h];
-			for (i = 1; k + i < start + len; i++) {
-				if (V[I[k + i] + h] < x) {
-					x = V[I[k + i] + h];
-					j = 0;
+	if(len<16) {
+		for(k=start;k<start+len;k+=j) {
+			j=1;x=V[I[k]+h];
+			for(i=1;k+i<start+len;i++) {
+				if(V[I[k+i]+h]<x) {
+					x=V[I[k+i]+h];
+					j=0;
 				};
-				if (V[I[k + i] + h] == x) {
-					tmp = I[k + j];
-					I[k + j] = I[k + i];
-					I[k + i] = tmp;
+				if(V[I[k+i]+h]==x) {
+					tmp=I[k+j];I[k+j]=I[k+i];I[k+i]=tmp;
 					j++;
 				};
 			};
-			for (i = 0; i < j; i++)
-				V[I[k + i]] = k + j - 1;
-			if (j == 1)
-				I[k] = -1;
+			for(i=0;i<j;i++) V[I[k+i]]=k+j-1;
+			if(j==1) I[k]=-1;
 		};
 		return;
 	};
 
-	x = V[I[start + len / 2] + h];
-	jj = 0;
-	kk = 0;
-	for (i = start; i < start + len; i++) {
-		if (V[I[i] + h] < x)
-			jj++;
-		if (V[I[i] + h] == x)
-			kk++;
+	x=V[I[start+len/2]+h];
+	jj=0;kk=0;
+	for(i=start;i<start+len;i++) {
+		if(V[I[i]+h]<x) jj++;
+		if(V[I[i]+h]==x) kk++;
 	};
-	jj += start;
-	kk += jj;
+	jj+=start;kk+=jj;
 
-	i = start;
-	j = 0;
-	k = 0;
-	while (i < jj) {
-		if (V[I[i] + h] < x) {
+	i=start;j=0;k=0;
+	while(i<jj) {
+		if(V[I[i]+h]<x) {
 			i++;
-		} else if (V[I[i] + h] == x) {
-			tmp = I[i];
-			I[i] = I[jj + j];
-			I[jj + j] = tmp;
+		} else if(V[I[i]+h]==x) {
+			tmp=I[i];I[i]=I[jj+j];I[jj+j]=tmp;
 			j++;
 		} else {
-			tmp = I[i];
-			I[i] = I[kk + k];
-			I[kk + k] = tmp;
+			tmp=I[i];I[i]=I[kk+k];I[kk+k]=tmp;
 			k++;
 		};
 	};
 
-	while (jj + j < kk) {
-		if (V[I[jj + j] + h] == x) {
+	while(jj+j<kk) {
+		if(V[I[jj+j]+h]==x) {
 			j++;
 		} else {
-			tmp = I[jj + j];
-			I[jj + j] = I[kk + k];
-			I[kk + k] = tmp;
+			tmp=I[jj+j];I[jj+j]=I[kk+k];I[kk+k]=tmp;
 			k++;
 		};
 	};
 
-	if (jj > start)
-		split(I, V, start, jj - start, h);
+	if(jj>start) split(I,V,start,jj-start,h);
 
-	for (i = 0; i < kk - jj; i++)
-		V[I[jj + i]] = kk - 1;
-	if (jj == kk - 1)
-		I[jj] = -1;
+	for(i=0;i<kk-jj;i++) V[I[jj+i]]=kk-1;
+	if(jj==kk-1) I[jj]=-1;
 
-	if (start + len > kk)
-		split(I, V, kk, start + len - kk, h);
+	if(start+len>kk) split(I,V,kk,start+len-kk,h);
 }
 
-static void qsufsort(off_t *I, off_t *V, u_char *old, off_t oldsize) {
+static void qsufsort(off_t *I,off_t *V,u_char *old,off_t oldsize)
+{
 	off_t buckets[256];
-	off_t i, h, len;
+	off_t i,h,len;
 
-	for (i = 0; i < 256; i++)
-		buckets[i] = 0;
-	for (i = 0; i < oldsize; i++)
-		buckets[old[i]]++;
-	for (i = 1; i < 256; i++)
-		buckets[i] += buckets[i - 1];
-	for (i = 255; i > 0; i--)
-		buckets[i] = buckets[i - 1];
-	buckets[0] = 0;
+	for(i=0;i<256;i++) buckets[i]=0;
+	for(i=0;i<oldsize;i++) buckets[old[i]]++;
+	for(i=1;i<256;i++) buckets[i]+=buckets[i-1];
+	for(i=255;i>0;i--) buckets[i]=buckets[i-1];
+	buckets[0]=0;
 
-	for (i = 0; i < oldsize; i++)
-		I[++buckets[old[i]]] = i;
-	I[0] = oldsize;
-	for (i = 0; i < oldsize; i++)
-		V[i] = buckets[old[i]];
-	V[oldsize] = 0;
-	for (i = 1; i < 256; i++)
-		if (buckets[i] == buckets[i - 1] + 1)
-			I[buckets[i]] = -1;
-	I[0] = -1;
+	for(i=0;i<oldsize;i++) I[++buckets[old[i]]]=i;
+	I[0]=oldsize;
+	for(i=0;i<oldsize;i++) V[i]=buckets[old[i]];
+	V[oldsize]=0;
+	for(i=1;i<256;i++) if(buckets[i]==buckets[i-1]+1) I[buckets[i]]=-1;
+	I[0]=-1;
 
-	for (h = 1; I[0] != -(oldsize + 1); h += h) {
-		len = 0;
-		for (i = 0; i < oldsize + 1;) {
-			if (I[i] < 0) {
-				len -= I[i];
-				i -= I[i];
+	for(h=1;I[0]!=-(oldsize+1);h+=h) {
+		len=0;
+		for(i=0;i<oldsize+1;) {
+			if(I[i]<0) {
+				len-=I[i];
+				i-=I[i];
 			} else {
-				if (len)
-					I[i - len] = -len;
-				len = V[I[i]] + 1 - i;
-				split(I, V, i, len, h);
-				i += len;
-				len = 0;
+				if(len) I[i-len]=-len;
+				len=V[I[i]]+1-i;
+				split(I,V,i,len,h);
+				i+=len;
+				len=0;
 			};
 		};
-		if (len)
-			I[i - len] = -len;
+		if(len) I[i-len]=-len;
 	};
 
-	for (i = 0; i < oldsize + 1; i++)
-		I[V[i]] = i;
+	for(i=0;i<oldsize+1;i++) I[V[i]]=i;
 }
 
-static off_t matchlen(u_char *old, off_t oldsize, u_char *new, off_t newsize) {
+static off_t matchlen(u_char *old,off_t oldsize,u_char *new,off_t newsize)
+{
 	off_t i;
 
-	for (i = 0; (i < oldsize) && (i < newsize); i++)
-		if (old[i] != new[i])
-			break;
+	for(i=0;(i<oldsize)&&(i<newsize);i++)
+		if(old[i]!=new[i]) break;
 
 	return i;
 }
 
-static off_t search(off_t *I, u_char *old, off_t oldsize, u_char *new,
-		off_t newsize, off_t st, off_t en, off_t *pos) {
-	off_t x, y;
+static off_t search(off_t *I,u_char *old,off_t oldsize,
+		u_char *new,off_t newsize,off_t st,off_t en,off_t *pos)
+{
+	off_t x,y;
 
-	if (en - st < 2) {
-		x = matchlen(old + I[st], oldsize - I[st], new, newsize);
-		y = matchlen(old + I[en], oldsize - I[en], new, newsize);
+	if(en-st<2) {
+		x=matchlen(old+I[st],oldsize-I[st],new,newsize);
+		y=matchlen(old+I[en],oldsize-I[en],new,newsize);
 
-		if (x > y) {
-			*pos = I[st];
+		if(x>y) {
+			*pos=I[st];
 			return x;
 		} else {
-			*pos = I[en];
+			*pos=I[en];
 			return y;
 		}
 	};
 
-	x = st + (en - st) / 2;
-	if (memcmp(old + I[x], new, BSDIFF_MIN(oldsize-I[x],newsize)) < 0) {
-		return search(I, old, oldsize, new, newsize, x, en, pos);
+	x=st+(en-st)/2;
+	if(memcmp(old+I[x],new,BSDIFF_MIN(oldsize-I[x],newsize))<0) {
+		return search(I,old,oldsize,new,newsize,x,en,pos);
 	} else {
-		return search(I, old, oldsize, new, newsize, st, x, pos);
+		return search(I,old,oldsize,new,newsize,st,x,pos);
 	};
 }
 
-static void offtout(off_t x, u_char *buf) {
+static off_t offtin(u_char *buf)
+{
 	off_t y;
 
-	if (x < 0)
-		y = -x;
-	else
-		y = x;
+	y=buf[7]&0x7F;
+	y=y*256;y+=buf[6];
+	y=y*256;y+=buf[5];
+	y=y*256;y+=buf[4];
+	y=y*256;y+=buf[3];
+	y=y*256;y+=buf[2];
+	y=y*256;y+=buf[1];
+	y=y*256;y+=buf[0];
 
-	buf[0] = y % 256;
-	y -= buf[0];
-	y = y / 256;
-	buf[1] = y % 256;
-	y -= buf[1];
-	y = y / 256;
-	buf[2] = y % 256;
-	y -= buf[2];
-	y = y / 256;
-	buf[3] = y % 256;
-	y -= buf[3];
-	y = y / 256;
-	buf[4] = y % 256;
-	y -= buf[4];
-	y = y / 256;
-	buf[5] = y % 256;
-	y -= buf[5];
-	y = y / 256;
-	buf[6] = y % 256;
-	y -= buf[6];
-	y = y / 256;
-	buf[7] = y % 256;
+	if(buf[7]&0x80) y=-y;
 
-	if (x < 0)
-		buf[7] |= 0x80;
+	return y;
 }
 
-PHP_METHOD( bsdiff, diff) {
+static void offtout(off_t x,u_char *buf)
+{
+	off_t y;
+
+	if(x<0) y=-x; else y=x;
+
+		buf[0]=y%256;y-=buf[0];
+	y=y/256;buf[1]=y%256;y-=buf[1];
+	y=y/256;buf[2]=y%256;y-=buf[2];
+	y=y/256;buf[3]=y%256;y-=buf[3];
+	y=y/256;buf[4]=y%256;y-=buf[4];
+	y=y/256;buf[5]=y%256;y-=buf[5];
+	y=y/256;buf[6]=y%256;y-=buf[6];
+	y=y/256;buf[7]=y%256;
+
+	if(x<0) buf[7]|=0x80;
+}
+
+PHP_FUNCTION( bsdiff_diff) {
 
 	int fd;
 	u_char *old_file, *new_file, *diff_file;
@@ -299,8 +268,6 @@ PHP_METHOD( bsdiff, diff) {
 	new_file = Z_STRVAL_P(z_new_file);
 	diff_file = Z_STRVAL_P(z_diff_file);
 
-//	php_printf("%s-%s-%s\n", old_file, new_file, diff_file);
-
 	/* Allocate oldsize+1 bytes instead of oldsize bytes to ensure
 		that we never try to malloc(0) and get a NULL pointer */
 	if(((fd=open(old_file,O_RDONLY,0))<0) ||
@@ -318,9 +285,7 @@ PHP_METHOD( bsdiff, diff) {
 		zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Internal error", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
-
-	qsufsort(I,V,old,oldsize);
-
+	qsufsort(I, V, old, oldsize);
 	free(V);
 
 	/* Allocate newsize+1 bytes instead of newsize bytes to ensure
@@ -537,15 +502,218 @@ PHP_METHOD( bsdiff, diff) {
 	RETURN_TRUE;
 }
 
+PHP_FUNCTION( bsdiff_patch) {
+
+	FILE * f, * cpf, * dpf, * epf;
+	BZFILE * cpfbz2, * dpfbz2, * epfbz2;
+	int cbz2err, dbz2err, ebz2err;
+	int fd;
+	ssize_t oldsize,newsize;
+	ssize_t bzctrllen,bzdatalen;
+	u_char header[32],buf[8];
+	u_char *old, *new;
+	off_t oldpos,newpos;
+	off_t ctrl[3];
+	off_t lenread;
+	off_t i;
+
+	u_char *old_file, *new_file, *diff_file;
+
+	zval * self = getThis();
+	zval * z_old_file, *z_new_file, *z_diff_file;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzz", &z_old_file, &z_diff_file, &z_new_file) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+
+	old_file = Z_STRVAL_P(z_old_file);
+	new_file = Z_STRVAL_P(z_new_file);
+	diff_file = Z_STRVAL_P(z_diff_file);
+
+	/* Open patch file */
+	if ((f = fopen(diff_file, "r")) == NULL) {
+		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error:open file %s faild.", diff_file);
+		RETURN_FALSE;
+	}
+
+	/*
+	File format:
+		0	8	"BSDIFF40"
+		8	8	X
+		16	8	Y
+		24	8	sizeof(newfile)
+		32	X	bzip2(control block)
+		32+X	Y	bzip2(diff block)
+		32+X+Y	???	bzip2(extra block)
+	with control block a set of triples (x,y,z) meaning "add x bytes
+	from oldfile to x bytes from the diff block; copy y bytes from the
+	extra block; seek forwards in oldfile by z bytes".
+	*/
+
+	/* Read header */
+	if (fread(header, 1, 32, f) < 32) {
+		if (feof(f)) {
+			zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Internal error:Corrupt patch.", 0 TSRMLS_CC);
+			RETURN_FALSE;
+		}
+		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error: fread (%s)", diff_file);
+		RETURN_FALSE;
+	}
+
+	/* Check for appropriate magic */
+	if (memcmp(header, "BSDIFF40", 8) != 0) {
+		zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Internal error:Corrupt patch.", 0 TSRMLS_CC);
+		RETURN_FALSE;
+	}
+
+	/* Read lengths from header */
+	bzctrllen=offtin(header+8);
+	bzdatalen=offtin(header+16);
+	newsize=offtin(header+24);
+	if((bzctrllen<0) || (bzdatalen<0) || (newsize<0)) {
+		zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Internal error:Corrupt patch.", 0 TSRMLS_CC);
+		RETURN_FALSE;
+	}
+
+	/* Close patch file and re-open it via libbzip2 at the right places */
+	if (fclose(f)) {
+		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error: fclose(%s)", diff_file);
+		RETURN_FALSE;
+	}
+	if ((cpf = fopen(diff_file, "r")) == NULL) {
+		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error: fopen(%s)", diff_file);
+		RETURN_FALSE;
+	}
+	if (fseeko(cpf, 32, SEEK_SET)) {
+		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error: fseeko(%s, %lld)", diff_file, (long long)32);
+		RETURN_FALSE;
+	}
+	if ((cpfbz2 = BZ2_bzReadOpen(&cbz2err, cpf, 0, 0, NULL, 0)) == NULL) {
+		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error: BZ2_bzReadOpen, bz2err = %d", cbz2err);
+		RETURN_FALSE;
+	}
+	if ((dpf = fopen(diff_file, "r")) == NULL) {
+		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error: fopen(%s)", diff_file);
+		RETURN_FALSE;
+	}
+	if (fseeko(dpf, 32 + bzctrllen, SEEK_SET)) {
+		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error: fseeko(%s, %lld)", diff_file, (long long)(32 + bzctrllen));
+		RETURN_FALSE;
+	}
+	if ((dpfbz2 = BZ2_bzReadOpen(&dbz2err, dpf, 0, 0, NULL, 0)) == NULL) {
+		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error: BZ2_bzReadOpen, bz2err = %d", dbz2err);
+		RETURN_FALSE;
+	}
+	if ((epf = fopen(diff_file, "r")) == NULL) {
+		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error: fopen(%s)", diff_file);
+		RETURN_FALSE;
+	}
+	if (fseeko(epf, 32 + bzctrllen + bzdatalen, SEEK_SET)) {
+		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error: fseeko(%s, %lld)", diff_file, (long long)(32 + bzctrllen + bzdatalen));
+		RETURN_FALSE;
+	}
+	if ((epfbz2 = BZ2_bzReadOpen(&ebz2err, epf, 0, 0, NULL, 0)) == NULL) {
+		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error: BZ2_bzReadOpen, bz2err = %d", ebz2err);
+		RETURN_FALSE;
+	}
+
+	if(((fd=open(old_file,O_RDONLY,0))<0) ||
+			((oldsize=lseek(fd,0,SEEK_END))==-1) ||
+			((old=malloc(oldsize+1))==NULL) ||
+			(lseek(fd,0,SEEK_SET)!=0) ||
+			(read(fd,old,oldsize)!=oldsize) ||
+			(close(fd)==-1)) {
+		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error: open (%s)", old_file);
+		RETURN_FALSE;
+	}
+
+	if((new=malloc(newsize+1))==NULL) {
+		zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Internal error", 0 TSRMLS_CC);
+		RETURN_FALSE;
+	}
+
+	oldpos=0;newpos=0;
+	while(newpos<newsize) {
+		/* Read control data */
+		for(i=0;i<=2;i++) {
+			lenread = BZ2_bzRead(&cbz2err, cpfbz2, buf, 8);
+			if ((lenread < 8) || ((cbz2err != BZ_OK) &&
+				(cbz2err != BZ_STREAM_END))) {
+				zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Internal error:Corrupt patch.", 0 TSRMLS_CC);
+				RETURN_FALSE;
+			}
+			ctrl[i]=offtin(buf);
+		};
+
+		/* Sanity-check */
+		if(newpos+ctrl[0]>newsize) {
+			zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Internal error:Corrupt patch.", 0 TSRMLS_CC);
+			RETURN_FALSE;
+		}
+
+		/* Read diff string */
+		lenread = BZ2_bzRead(&dbz2err, dpfbz2, new + newpos, ctrl[0]);
+		if ((lenread < ctrl[0]) ||
+			((dbz2err != BZ_OK) && (dbz2err != BZ_STREAM_END))) {
+			zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Internal error:Corrupt patch.", 0 TSRMLS_CC);
+			RETURN_FALSE;
+		}
+
+		/* Add old data to diff string */
+		for(i=0;i<ctrl[0];i++)
+			if((oldpos+i>=0) && (oldpos+i<oldsize))
+				new[newpos+i]+=old[oldpos+i];
+
+		/* Adjust pointers */
+		newpos+=ctrl[0];
+		oldpos+=ctrl[0];
+
+		/* Sanity-check */
+		if(newpos+ctrl[1]>newsize) {
+			zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Internal error:Corrupt patch.", 0 TSRMLS_CC);
+			RETURN_FALSE;
+		}
+		/* Read extra string */
+		lenread = BZ2_bzRead(&ebz2err, epfbz2, new + newpos, ctrl[1]);
+		if ((lenread < ctrl[1]) ||
+			((ebz2err != BZ_OK) && (ebz2err != BZ_STREAM_END))) {
+			zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Internal error:Corrupt patch.", 0 TSRMLS_CC);
+			RETURN_FALSE;
+		}
+
+		/* Adjust pointers */
+		newpos+=ctrl[1];
+		oldpos+=ctrl[2];
+	};
+
+	/* Clean up the bzip2 reads */
+	BZ2_bzReadClose(&cbz2err, cpfbz2);
+	BZ2_bzReadClose(&dbz2err, dpfbz2);
+	BZ2_bzReadClose(&ebz2err, epfbz2);
+	if (fclose(cpf) || fclose(dpf) || fclose(epf)) {
+		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error: fclose(%s)", diff_file);
+		RETURN_FALSE;
+	}
+
+	/* Write the new file */
+	if(((fd=open(new_file,O_CREAT|O_TRUNC|O_WRONLY,0666))<0) ||
+		(write(fd,new,newsize)!=newsize) || (close(fd)==-1)) {
+		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error: write file (%s)", new_file);
+		RETURN_FALSE;
+	}
+	free(new);
+	free(old);
+
+	RETURN_TRUE;
+}
+
 /* {{{ bsdiff_functions[]
  *
  * Every user visible function must have an entry in bsdiff_functions[].
  */
 const zend_function_entry bsdiff_functions[] = {
-//	PHP_FE(confirm_bsdiff_compiled,	NULL)		/* For testing, remove later. */
-
-	PHP_ME(bsdiff, diff, NULL, ZEND_ACC_PUBLIC)
-
+	PHP_FE(bsdiff_diff,	NULL)		/* For testing, remove later. */
+	PHP_FE(bsdiff_patch, NULL)
 	PHP_FE_END /* Must be the last line in bsdiff_functions[] */
 };
 /* }}} */
@@ -556,9 +724,12 @@ zend_module_entry bsdiff_module_entry = {
 #if ZEND_MODULE_API_NO >= 20010901
 		STANDARD_MODULE_HEADER,
 #endif
-		"bsdiff", bsdiff_functions, PHP_MINIT(bsdiff), PHP_MSHUTDOWN(bsdiff),
-		PHP_RINIT(bsdiff), /* Replace with NULL if there's nothing to do at request start */
-		PHP_RSHUTDOWN(bsdiff), /* Replace with NULL if there's nothing to do at request end */
+		"bsdiff",
+		bsdiff_functions,
+		PHP_MINIT(bsdiff),
+		PHP_MSHUTDOWN(bsdiff),
+		PHP_RINIT(bsdiff),		/* Replace with NULL if there's nothing to do at request start */
+		PHP_RSHUTDOWN(bsdiff),	/* Replace with NULL if there's nothing to do at request end */
 		PHP_MINFO(bsdiff),
 #if ZEND_MODULE_API_NO >= 20010901
 		"0.1", /* Replace with version number for your extension */
@@ -597,10 +768,6 @@ PHP_MINIT_FUNCTION( bsdiff) {
 	/* If you have INI entries, uncomment these lines 
 	 REGISTER_INI_ENTRIES();
 	 */
-	zend_class_entry ce;
-	INIT_CLASS_ENTRY(ce, "bsdiff", bsdiff_functions);
-
-	bsdiff_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
 	return SUCCESS;
 }
 /* }}} */
