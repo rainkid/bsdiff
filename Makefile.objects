@@ -1,5 +1,5 @@
-bsdiff.lo: /home/rainkid/workspace/bsdiff-extension/bsdiff.c
-	$(LIBTOOL) --mode=compile $(CC)  -I. -I/home/rainkid/workspace/bsdiff-extension $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /home/rainkid/workspace/bsdiff-extension/bsdiff.c -o bsdiff.lo 
+bsdiff.lo: /home/rainkid/workspace/phpsrc/ext/bsdiff/bsdiff.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/home/rainkid/workspace/phpsrc/ext/bsdiff $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /home/rainkid/workspace/phpsrc/ext/bsdiff/bsdiff.c -o bsdiff.lo 
 $(phplibdir)/bsdiff.la: ./bsdiff.la
 	$(LIBTOOL) --mode=install cp ./bsdiff.la $(phplibdir)
 

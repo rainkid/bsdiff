@@ -1345,7 +1345,7 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-libdir=NAME      Look for libraries in .../NAME rather than .../lib
   --with-php-config=PATH  Path to php-config php-config
-  --with-bsdiff             Include bsdiff support
+  --with-bz2=DIR        Include BZip2 support
   --with-pic[=PKGS]       try to use only PIC/non-PIC objects [default=use
                           both]
   --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
@@ -3831,8 +3831,8 @@ $as_echo "no" >&6; }
 
 php_with_bsdiff=no
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for bsdiff support" >&5
-$as_echo_n "checking for bsdiff support... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for BZip2 support" >&5
+$as_echo_n "checking for BZip2 support... " >&6; }
 
 # Check whether --with-bsdiff was given.
 if test "${with_bsdiff+set}" = set; then :
@@ -3877,13 +3877,9 @@ $as_echo "$ext_output" >&6; }
 
 
 
-
-
 if test "$PHP_BSDIFF" != "no"; then
-
-
-  if test -r $PHP_BSDIFF/include/bzlib.h; then
-    BZIP_DIR=$PHP_BSDIFF
+  if test -r $PHP_BZ2/include/bzlib.h; then
+    BZIP_DIR=$PHP_BZ2
   else
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for BZip2 in default path" >&5
 $as_echo_n "checking for BZip2 in default path... " >&6; }
@@ -3902,38 +3898,6 @@ $as_echo "found in $i" >&6; }
 $as_echo "not found" >&6; }
     as_fn_error $? "Please reinstall the BZip2 distribution" "$LINENO" 5
   fi
-
-
-  if test "$BZIP_DIR/include" != "/usr/include"; then
-
-  if test -z "$BZIP_DIR/include" || echo "$BZIP_DIR/include" | grep '^/' >/dev/null ; then
-    ai_p=$BZIP_DIR/include
-  else
-
-    ep_dir="`echo $BZIP_DIR/include|$SED 's%/*[^/][^/]*/*$%%'`"
-
-    ep_realdir="`(cd \"$ep_dir\" && pwd)`"
-    ai_p="$ep_realdir/`basename \"$BZIP_DIR/include\"`"
-  fi
-
-
-
-  unique=`echo $ai_p|$SED 's/[^a-zA-Z0-9]/_/g'`
-
-  cmd="echo $ac_n \"\$INCLUDEPATH$unique$ac_c\""
-  if test -n "$unique" && test "`eval $cmd`" = "" ; then
-    eval "INCLUDEPATH$unique=set"
-
-      if test ""; then
-        INCLUDES="-I$ai_p $INCLUDES"
-      else
-        INCLUDES="$INCLUDES -I$ai_p"
-      fi
-
-  fi
-
-  fi
-
 
 
   save_old_LDFLAGS=$LDFLAGS
@@ -4109,7 +4073,7 @@ if test "x$ac_cv_lib_bz2_BZ2_bzerror" = xyes; then :
 
 
   if test "$ext_shared" = "yes"; then
-    BZ2_SHARED_LIBADD="-lbz2 $BZ2_SHARED_LIBADD"
+    BSDIFF_SHARED_LIBADD="-lbz2 $BSDIFF_SHARED_LIBADD"
     if test -n "$BZIP_DIR/$PHP_LIBDIR"; then
 
   if test "$BZIP_DIR/$PHP_LIBDIR" != "/usr/$PHP_LIBDIR" && test "$BZIP_DIR/$PHP_LIBDIR" != "/usr/lib"; then
@@ -4126,9 +4090,9 @@ if test "x$ac_cv_lib_bz2_BZ2_bzerror" = xyes; then :
 
 
       if test "$ext_shared" = "yes"; then
-        BZ2_SHARED_LIBADD="-L$ai_p $BZ2_SHARED_LIBADD"
+        BSDIFF_SHARED_LIBADD="-L$ai_p $BSDIFF_SHARED_LIBADD"
         test "x$PHP_RPATH" != "xno" && \
-        test -n "$ld_runpath_switch" && BZ2_SHARED_LIBADD="$ld_runpath_switch$ai_p $BZ2_SHARED_LIBADD"
+        test -n "$ld_runpath_switch" && BSDIFF_SHARED_LIBADD="$ld_runpath_switch$ai_p $BSDIFF_SHARED_LIBADD"
       else
 
 
@@ -4217,7 +4181,7 @@ else
     ext_shared=$save_ext_shared
     unset ac_cv_lib_bz2_BZ2_bzerror
 
-    as_fn_error $? "bz2 module requires libbz2 >= 1.0.0" "$LINENO" 5
+    as_fn_error $? "bsdiff module requires libbz2 >= 1.0.0" "$LINENO" 5
 
 
 fi
@@ -4226,6 +4190,176 @@ fi
 
   PHP_VAR_SUBST="$PHP_VAR_SUBST BSDIFF_SHARED_LIBADD"
 
+
+
+  case bz2 in
+  c|c_r|pthread*) ;;
+  *)
+    if test "$ext_shared" = "yes"; then
+        BSDIFF_SHARED_LIBADD="$BSDIFF_SHARED_LIBADD -lbz2"
+    else
+
+
+  case bz2 in
+  c|c_r|pthread*) ;;
+  *)
+      LIBS="$LIBS -lbz2"
+   ;;
+  esac
+
+
+    fi
+   ;;
+  esac
+
+
+
+  save_old_LDFLAGS=$LDFLAGS
+  ac_stuff=""
+
+  save_ext_shared=$ext_shared
+  ext_shared=yes
+
+  for ac_i in $ac_stuff; do
+    case $ac_i in
+    -pthread)
+      if test "$ext_shared" = "yes"; then
+        LDFLAGS="$LDFLAGS -pthread"
+      else
+
+
+  unique=`echo $ac_i|$SED 's/[^a-zA-Z0-9]/_/g'`
+
+  cmd="echo $ac_n \"\$EXTRA_LDFLAGS$unique$ac_c\""
+  if test -n "$unique" && test "`eval $cmd`" = "" ; then
+    eval "EXTRA_LDFLAGS$unique=set"
+    EXTRA_LDFLAGS="$EXTRA_LDFLAGS $ac_i"
+  fi
+
+      fi
+    ;;
+    -l*)
+      ac_ii=`echo $ac_i|cut -c 3-`
+
+
+  case $ac_ii in
+  c|c_r|pthread*) ;;
+  *)
+    if test "$ext_shared" = "yes"; then
+        LDFLAGS="$LDFLAGS -l$ac_ii"
+    else
+
+
+  case $ac_ii in
+  c|c_r|pthread*) ;;
+  *)
+      LIBS="$LIBS -l$ac_ii"
+   ;;
+  esac
+
+
+    fi
+   ;;
+  esac
+
+
+    ;;
+    -L*)
+      ac_ii=`echo $ac_i|cut -c 3-`
+
+  if test "$ac_ii" != "/usr/$PHP_LIBDIR" && test "$ac_ii" != "/usr/lib"; then
+
+  if test -z "$ac_ii" || echo "$ac_ii" | grep '^/' >/dev/null ; then
+    ai_p=$ac_ii
+  else
+
+    ep_dir="`echo $ac_ii|$SED 's%/*[^/][^/]*/*$%%'`"
+
+    ep_realdir="`(cd \"$ep_dir\" && pwd)`"
+    ai_p="$ep_realdir/`basename \"$ac_ii\"`"
+  fi
+
+
+      if test "$ext_shared" = "yes"; then
+        LDFLAGS="-L$ai_p $LDFLAGS"
+        test "x$PHP_RPATH" != "xno" && \
+        test -n "$ld_runpath_switch" && LDFLAGS="$ld_runpath_switch$ai_p $LDFLAGS"
+      else
+
+
+
+  unique=`echo $ai_p|$SED 's/[^a-zA-Z0-9]/_/g'`
+
+  cmd="echo $ac_n \"\$LIBPATH$unique$ac_c\""
+  if test -n "$unique" && test "`eval $cmd`" = "" ; then
+    eval "LIBPATH$unique=set"
+
+    test "x$PHP_RPATH" != "xno" &&
+    test -n "$ld_runpath_switch" && LDFLAGS="$LDFLAGS $ld_runpath_switch$ai_p"
+    LDFLAGS="$LDFLAGS -L$ai_p"
+    PHP_RPATHS="$PHP_RPATHS $ai_p"
+
+  fi
+
+
+      fi
+
+  fi
+
+    ;;
+    esac
+  done
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for BZ2_bzWriteOpen in -lbz2" >&5
+$as_echo_n "checking for BZ2_bzWriteOpen in -lbz2... " >&6; }
+if ${ac_cv_lib_bz2_BZ2_bzWriteOpen+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lbz2  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char BZ2_bzWriteOpen ();
+int
+main ()
+{
+return BZ2_bzWriteOpen ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_bz2_BZ2_bzWriteOpen=yes
+else
+  ac_cv_lib_bz2_BZ2_bzWriteOpen=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_bz2_BZ2_bzWriteOpen" >&5
+$as_echo "$ac_cv_lib_bz2_BZ2_bzWriteOpen" >&6; }
+if test "x$ac_cv_lib_bz2_BZ2_bzWriteOpen" = xyes; then :
+
+    LDFLAGS=$save_old_LDFLAGS
+    ext_shared=$save_ext_shared
+
+
+else
+
+    LDFLAGS=$save_old_LDFLAGS
+    ext_shared=$save_ext_shared
+    unset ac_cv_lib_bz2_BZ2_bzWriteOpen
+    as_fn_error $? "your bzlib is not shared" "$LINENO" 5
+
+fi
 
 
 

@@ -1,7 +1,7 @@
-srcdir = /home/rainkid/workspace/bsdiff-extension
-builddir = /home/rainkid/workspace/bsdiff-extension
-top_srcdir = /home/rainkid/workspace/bsdiff-extension
-top_builddir = /home/rainkid/workspace/bsdiff-extension
+srcdir = /home/rainkid/workspace/phpsrc/ext/bsdiff
+builddir = /home/rainkid/workspace/phpsrc/ext/bsdiff
+top_srcdir = /home/rainkid/workspace/phpsrc/ext/bsdiff
+top_builddir = /home/rainkid/workspace/phpsrc/ext/bsdiff
 EGREP = /bin/grep -E
 SED = /bin/sed
 CONFIGURE_COMMAND = './configure' '--with-php-config=/usr/bin/php-config'
@@ -11,7 +11,7 @@ SHLIB_DL_SUFFIX_NAME = so
 ZEND_EXT_TYPE = zend_extension
 RE2C = re2c
 AWK = gawk
-BSDIFF_SHARED_LIBADD =
+BSDIFF_SHARED_LIBADD = -lbz2 -lbz2
 shared_objects_bsdiff = bsdiff.lo
 PHP_PECL_EXTENSION = bsdiff
 PHP_MODULES = $(phplibdir)/bsdiff.la
@@ -22,7 +22,7 @@ prefix = /usr
 exec_prefix = $(prefix)
 libdir = ${exec_prefix}/lib
 prefix = /usr
-phplibdir = /home/rainkid/workspace/bsdiff-extension/modules
+phplibdir = /home/rainkid/workspace/phpsrc/ext/bsdiff/modules
 phpincludedir = /usr/include/php5
 CC = cc
 CFLAGS = -g -O2
@@ -162,8 +162,8 @@ distclean: clean
 
 .PHONY: all clean install distclean test
 .NOEXPORT:
-bsdiff.lo: /home/rainkid/workspace/bsdiff-extension/bsdiff.c
-	$(LIBTOOL) --mode=compile $(CC)  -I. -I/home/rainkid/workspace/bsdiff-extension $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /home/rainkid/workspace/bsdiff-extension/bsdiff.c -o bsdiff.lo 
+bsdiff.lo: /home/rainkid/workspace/phpsrc/ext/bsdiff/bsdiff.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/home/rainkid/workspace/phpsrc/ext/bsdiff $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /home/rainkid/workspace/phpsrc/ext/bsdiff/bsdiff.c -o bsdiff.lo 
 $(phplibdir)/bsdiff.la: ./bsdiff.la
 	$(LIBTOOL) --mode=install cp ./bsdiff.la $(phplibdir)
 
