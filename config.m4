@@ -42,8 +42,6 @@ if test "$PHP_BSDIFF" != "no"; then
 
   PHP_SUBST(BSDIFF_SHARED_LIBADD)
   PHP_ADD_LIBRARY(bz2, 1, BSDIFF_SHARED_LIBADD)
-  PHP_CHECK_LIBRARY(bz2, BZ2_bzWriteOpen, [ ], AC_MSG_ERROR([your bzlib is not shared]))
-  PHP_CHECK_LIBRARY(bz2, BZ2_bzWrite, [ ], AC_MSG_ERROR([your bzlib is not shared]))
 
   PHP_NEW_EXTENSION(bsdiff, bsdiff.c, $ext_shared)
 fi
