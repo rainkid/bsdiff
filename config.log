@@ -221,181 +221,177 @@ configure:4001: checking for BZ2_bzerror in -lbz2
 configure:4026: cc -o conftest -g -O2   conftest.c -lbz2   >&5
 configure:4026: $? = 0
 configure:4035: result: yes
-configure:4313: checking for BZ2_bzWriteOpen in -lbz2
-configure:4338: cc -o conftest -g -O2   conftest.c -lbz2   >&5
-configure:4338: $? = 0
-configure:4347: result: yes
-configure:4716: checking how to print strings
-configure:4743: result: printf
-configure:4764: checking for a sed that does not truncate output
-configure:4828: result: /bin/sed
-configure:4846: checking for fgrep
-configure:4908: result: /bin/grep -F
-configure:4943: checking for ld used by cc
-configure:5010: result: /usr/bin/ld
-configure:5017: checking if the linker (/usr/bin/ld) is GNU ld
-configure:5032: result: yes
-configure:5044: checking for BSD- or MS-compatible name lister (nm)
-configure:5093: result: /usr/bin/nm -B
-configure:5223: checking the name lister (/usr/bin/nm -B) interface
-configure:5230: cc -c -g -O2  conftest.c >&5
-configure:5233: /usr/bin/nm -B "conftest.o"
-configure:5236: output
+configure:4468: checking how to print strings
+configure:4495: result: printf
+configure:4516: checking for a sed that does not truncate output
+configure:4580: result: /bin/sed
+configure:4598: checking for fgrep
+configure:4660: result: /bin/grep -F
+configure:4695: checking for ld used by cc
+configure:4762: result: /usr/bin/ld
+configure:4769: checking if the linker (/usr/bin/ld) is GNU ld
+configure:4784: result: yes
+configure:4796: checking for BSD- or MS-compatible name lister (nm)
+configure:4845: result: /usr/bin/nm -B
+configure:4975: checking the name lister (/usr/bin/nm -B) interface
+configure:4982: cc -c -g -O2  conftest.c >&5
+configure:4985: /usr/bin/nm -B "conftest.o"
+configure:4988: output
 0000000000000000 B some_variable
-configure:5243: result: BSD nm
-configure:5246: checking whether ln -s works
-configure:5250: result: yes
-configure:5258: checking the maximum length of command line arguments
-configure:5388: result: 1572864
-configure:5405: checking whether the shell understands some XSI constructs
-configure:5415: result: yes
-configure:5419: checking whether the shell understands "+="
-configure:5425: result: yes
-configure:5460: checking how to convert x86_64-unknown-linux-gnu file names to x86_64-unknown-linux-gnu format
-configure:5500: result: func_convert_file_noop
-configure:5507: checking how to convert x86_64-unknown-linux-gnu file names to toolchain format
-configure:5527: result: func_convert_file_noop
-configure:5534: checking for /usr/bin/ld option to reload object files
-configure:5541: result: -r
-configure:5615: checking for objdump
-configure:5631: found /usr/bin/objdump
-configure:5642: result: objdump
-configure:5674: checking how to recognize dependent libraries
-configure:5876: result: pass_all
-configure:5961: checking for dlltool
-configure:5991: result: no
-configure:6021: checking how to associate runtime and link libraries
-configure:6048: result: printf %s\n
-configure:6108: checking for ar
-configure:6124: found /usr/bin/ar
-configure:6135: result: ar
-configure:6172: checking for archiver @FILE support
-configure:6189: cc -c -g -O2  conftest.c >&5
-configure:6189: $? = 0
-configure:6192: ar cru libconftest.a @conftest.lst >&5
-configure:6195: $? = 0
-configure:6200: ar cru libconftest.a @conftest.lst >&5
+configure:4995: result: BSD nm
+configure:4998: checking whether ln -s works
+configure:5002: result: yes
+configure:5010: checking the maximum length of command line arguments
+configure:5140: result: 1572864
+configure:5157: checking whether the shell understands some XSI constructs
+configure:5167: result: yes
+configure:5171: checking whether the shell understands "+="
+configure:5177: result: yes
+configure:5212: checking how to convert x86_64-unknown-linux-gnu file names to x86_64-unknown-linux-gnu format
+configure:5252: result: func_convert_file_noop
+configure:5259: checking how to convert x86_64-unknown-linux-gnu file names to toolchain format
+configure:5279: result: func_convert_file_noop
+configure:5286: checking for /usr/bin/ld option to reload object files
+configure:5293: result: -r
+configure:5367: checking for objdump
+configure:5383: found /usr/bin/objdump
+configure:5394: result: objdump
+configure:5426: checking how to recognize dependent libraries
+configure:5628: result: pass_all
+configure:5713: checking for dlltool
+configure:5743: result: no
+configure:5773: checking how to associate runtime and link libraries
+configure:5800: result: printf %s\n
+configure:5860: checking for ar
+configure:5876: found /usr/bin/ar
+configure:5887: result: ar
+configure:5924: checking for archiver @FILE support
+configure:5941: cc -c -g -O2  conftest.c >&5
+configure:5941: $? = 0
+configure:5944: ar cru libconftest.a @conftest.lst >&5
+configure:5947: $? = 0
+configure:5952: ar cru libconftest.a @conftest.lst >&5
 ar: conftest.o: No such file or directory
-configure:6203: $? = 1
-configure:6215: result: @
-configure:6273: checking for strip
-configure:6289: found /usr/bin/strip
-configure:6300: result: strip
-configure:6372: checking for ranlib
-configure:6388: found /usr/bin/ranlib
-configure:6399: result: ranlib
-configure:6476: checking for gawk
-configure:6503: result: gawk
-configure:6543: checking command to parse /usr/bin/nm -B output from cc object
-configure:6663: cc -c -g -O2  conftest.c >&5
-configure:6666: $? = 0
-configure:6670: /usr/bin/nm -B conftest.o \| sed -n -e 's/^.*[ ]\([ABCDGIRSTW][ABCDGIRSTW]*\)[ ][ ]*\([_A-Za-z][_A-Za-z0-9]*\)$/\1 \2 \2/p' | sed '/ __gnu_lto/d' \> conftest.nm
-configure:6673: $? = 0
-configure:6739: cc -o conftest -g -O2   conftest.c conftstm.o >&5
-configure:6742: $? = 0
-configure:6780: result: ok
-configure:6817: checking for sysroot
-configure:6847: result: no
-configure:6924: cc -c -g -O2  conftest.c >&5
-configure:6927: $? = 0
-configure:7103: checking for mt
-configure:7119: found /bin/mt
-configure:7130: result: mt
-configure:7153: checking if mt is a manifest tool
-configure:7159: mt '-?'
-configure:7167: result: no
-configure:7804: checking for ANSI C header files
-configure:7824: cc -c -g -O2  conftest.c >&5
-configure:7824: $? = 0
-configure:7897: cc -o conftest -g -O2   conftest.c  >&5
-configure:7897: $? = 0
-configure:7897: ./conftest
-configure:7897: $? = 0
-configure:7908: result: yes
-configure:7921: checking for sys/types.h
-configure:7921: cc -c -g -O2  conftest.c >&5
-configure:7921: $? = 0
-configure:7921: result: yes
-configure:7921: checking for sys/stat.h
-configure:7921: cc -c -g -O2  conftest.c >&5
-configure:7921: $? = 0
-configure:7921: result: yes
-configure:7921: checking for stdlib.h
-configure:7921: cc -c -g -O2  conftest.c >&5
-configure:7921: $? = 0
-configure:7921: result: yes
-configure:7921: checking for string.h
-configure:7921: cc -c -g -O2  conftest.c >&5
-configure:7921: $? = 0
-configure:7921: result: yes
-configure:7921: checking for memory.h
-configure:7921: cc -c -g -O2  conftest.c >&5
-configure:7921: $? = 0
-configure:7921: result: yes
-configure:7921: checking for strings.h
-configure:7921: cc -c -g -O2  conftest.c >&5
-configure:7921: $? = 0
-configure:7921: result: yes
-configure:7921: checking for inttypes.h
-configure:7921: cc -c -g -O2  conftest.c >&5
-configure:7921: $? = 0
-configure:7921: result: yes
-configure:7921: checking for stdint.h
-configure:7921: cc -c -g -O2  conftest.c >&5
-configure:7921: $? = 0
-configure:7921: result: yes
-configure:7921: checking for unistd.h
-configure:7921: cc -c -g -O2  conftest.c >&5
-configure:7921: $? = 0
-configure:7921: result: yes
-configure:7935: checking for dlfcn.h
-configure:7935: cc -c -g -O2  conftest.c >&5
-configure:7935: $? = 0
-configure:7935: result: yes
-configure:8141: checking for objdir
-configure:8156: result: .libs
-configure:8427: checking if cc supports -fno-rtti -fno-exceptions
-configure:8445: cc -c -g -O2  -fno-rtti -fno-exceptions conftest.c >&5
+configure:5955: $? = 1
+configure:5967: result: @
+configure:6025: checking for strip
+configure:6041: found /usr/bin/strip
+configure:6052: result: strip
+configure:6124: checking for ranlib
+configure:6140: found /usr/bin/ranlib
+configure:6151: result: ranlib
+configure:6228: checking for gawk
+configure:6255: result: gawk
+configure:6295: checking command to parse /usr/bin/nm -B output from cc object
+configure:6415: cc -c -g -O2  conftest.c >&5
+configure:6418: $? = 0
+configure:6422: /usr/bin/nm -B conftest.o \| sed -n -e 's/^.*[ ]\([ABCDGIRSTW][ABCDGIRSTW]*\)[ ][ ]*\([_A-Za-z][_A-Za-z0-9]*\)$/\1 \2 \2/p' | sed '/ __gnu_lto/d' \> conftest.nm
+configure:6425: $? = 0
+configure:6491: cc -o conftest -g -O2   conftest.c conftstm.o >&5
+configure:6494: $? = 0
+configure:6532: result: ok
+configure:6569: checking for sysroot
+configure:6599: result: no
+configure:6676: cc -c -g -O2  conftest.c >&5
+configure:6679: $? = 0
+configure:6855: checking for mt
+configure:6871: found /bin/mt
+configure:6882: result: mt
+configure:6905: checking if mt is a manifest tool
+configure:6911: mt '-?'
+configure:6919: result: no
+configure:7556: checking for ANSI C header files
+configure:7576: cc -c -g -O2  conftest.c >&5
+configure:7576: $? = 0
+configure:7649: cc -o conftest -g -O2   conftest.c  >&5
+configure:7649: $? = 0
+configure:7649: ./conftest
+configure:7649: $? = 0
+configure:7660: result: yes
+configure:7673: checking for sys/types.h
+configure:7673: cc -c -g -O2  conftest.c >&5
+configure:7673: $? = 0
+configure:7673: result: yes
+configure:7673: checking for sys/stat.h
+configure:7673: cc -c -g -O2  conftest.c >&5
+configure:7673: $? = 0
+configure:7673: result: yes
+configure:7673: checking for stdlib.h
+configure:7673: cc -c -g -O2  conftest.c >&5
+configure:7673: $? = 0
+configure:7673: result: yes
+configure:7673: checking for string.h
+configure:7673: cc -c -g -O2  conftest.c >&5
+configure:7673: $? = 0
+configure:7673: result: yes
+configure:7673: checking for memory.h
+configure:7673: cc -c -g -O2  conftest.c >&5
+configure:7673: $? = 0
+configure:7673: result: yes
+configure:7673: checking for strings.h
+configure:7673: cc -c -g -O2  conftest.c >&5
+configure:7673: $? = 0
+configure:7673: result: yes
+configure:7673: checking for inttypes.h
+configure:7673: cc -c -g -O2  conftest.c >&5
+configure:7673: $? = 0
+configure:7673: result: yes
+configure:7673: checking for stdint.h
+configure:7673: cc -c -g -O2  conftest.c >&5
+configure:7673: $? = 0
+configure:7673: result: yes
+configure:7673: checking for unistd.h
+configure:7673: cc -c -g -O2  conftest.c >&5
+configure:7673: $? = 0
+configure:7673: result: yes
+configure:7687: checking for dlfcn.h
+configure:7687: cc -c -g -O2  conftest.c >&5
+configure:7687: $? = 0
+configure:7687: result: yes
+configure:7893: checking for objdir
+configure:7908: result: .libs
+configure:8179: checking if cc supports -fno-rtti -fno-exceptions
+configure:8197: cc -c -g -O2  -fno-rtti -fno-exceptions conftest.c >&5
 cc1: warning: command line option '-fno-rtti' is valid for C++/ObjC++ but not for C [enabled by default]
-configure:8449: $? = 0
-configure:8462: result: no
-configure:8789: checking for cc option to produce PIC
-configure:8796: result: -fPIC -DPIC
-configure:8804: checking if cc PIC flag -fPIC -DPIC works
-configure:8822: cc -c -g -O2  -fPIC -DPIC -DPIC conftest.c >&5
-configure:8826: $? = 0
-configure:8839: result: yes
-configure:8868: checking if cc static flag -static works
-configure:8896: result: yes
-configure:8911: checking if cc supports -c -o file.o
-configure:8932: cc -c -g -O2  -o out/conftest2.o conftest.c >&5
-configure:8936: $? = 0
-configure:8958: result: yes
-configure:8966: checking if cc supports -c -o file.o
-configure:9013: result: yes
-configure:9046: checking whether the cc linker (/usr/bin/ld -m elf_x86_64) supports shared libraries
-configure:10203: result: yes
-configure:10240: checking whether -lc should be explicitly linked in
-configure:10248: cc -c -g -O2  conftest.c >&5
-configure:10251: $? = 0
-configure:10266: cc -shared  -fPIC -DPIC conftest.o  -v -Wl,-soname -Wl,conftest -o conftest 2\>\&1 \| /bin/grep  -lc  \>/dev/null 2\>\&1
-configure:10269: $? = 0
-configure:10283: result: no
-configure:10443: checking dynamic linker characteristics
-configure:10954: cc -o conftest -g -O2   -Wl,-rpath -Wl,/foo conftest.c  >&5
-configure:10954: $? = 0
-configure:11188: result: GNU/Linux ld.so
-configure:11295: checking how to hardcode library paths into programs
-configure:11320: result: immediate
-configure:11860: checking whether stripping libraries is possible
-configure:11865: result: yes
-configure:11900: checking if libtool supports shared libraries
-configure:11902: result: yes
-configure:11905: checking whether to build shared libraries
-configure:11926: result: yes
-configure:11929: checking whether to build static libraries
-configure:11933: result: no
-configure:12209: creating ./config.status
+configure:8201: $? = 0
+configure:8214: result: no
+configure:8541: checking for cc option to produce PIC
+configure:8548: result: -fPIC -DPIC
+configure:8556: checking if cc PIC flag -fPIC -DPIC works
+configure:8574: cc -c -g -O2  -fPIC -DPIC -DPIC conftest.c >&5
+configure:8578: $? = 0
+configure:8591: result: yes
+configure:8620: checking if cc static flag -static works
+configure:8648: result: yes
+configure:8663: checking if cc supports -c -o file.o
+configure:8684: cc -c -g -O2  -o out/conftest2.o conftest.c >&5
+configure:8688: $? = 0
+configure:8710: result: yes
+configure:8718: checking if cc supports -c -o file.o
+configure:8765: result: yes
+configure:8798: checking whether the cc linker (/usr/bin/ld -m elf_x86_64) supports shared libraries
+configure:9955: result: yes
+configure:9992: checking whether -lc should be explicitly linked in
+configure:10000: cc -c -g -O2  conftest.c >&5
+configure:10003: $? = 0
+configure:10018: cc -shared  -fPIC -DPIC conftest.o  -v -Wl,-soname -Wl,conftest -o conftest 2\>\&1 \| /bin/grep  -lc  \>/dev/null 2\>\&1
+configure:10021: $? = 0
+configure:10035: result: no
+configure:10195: checking dynamic linker characteristics
+configure:10706: cc -o conftest -g -O2   -Wl,-rpath -Wl,/foo conftest.c  >&5
+configure:10706: $? = 0
+configure:10940: result: GNU/Linux ld.so
+configure:11047: checking how to hardcode library paths into programs
+configure:11072: result: immediate
+configure:11612: checking whether stripping libraries is possible
+configure:11617: result: yes
+configure:11652: checking if libtool supports shared libraries
+configure:11654: result: yes
+configure:11657: checking whether to build shared libraries
+configure:11678: result: yes
+configure:11681: checking whether to build static libraries
+configure:11685: result: no
+configure:11961: creating ./config.status
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -452,7 +448,6 @@ ac_cv_header_sys_stat_h=yes
 ac_cv_header_sys_types_h=yes
 ac_cv_header_unistd_h=yes
 ac_cv_host=x86_64-unknown-linux-gnu
-ac_cv_lib_bz2_BZ2_bzWriteOpen=yes
 ac_cv_lib_bz2_BZ2_bzerror=yes
 ac_cv_objext=o
 ac_cv_path_EGREP='/bin/grep -E'

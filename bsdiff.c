@@ -276,13 +276,13 @@ PHP_FUNCTION( bsdiff_diff) {
 		(lseek(fd,0,SEEK_SET)!=0) ||
 		(read(fd,old,oldsize)!=oldsize) ||
 		(close(fd)==-1)) {
-		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error:%s", old_file);
+		zend_error(E_ERROR, "Internal error:%s", old_file);
 		RETURN_FALSE;
 	}
 
 	if(((I=malloc((oldsize+1)*sizeof(off_t)))==NULL) ||
 		((V=malloc((oldsize+1)*sizeof(off_t)))==NULL)) {
-		zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Internal error", 0 TSRMLS_CC);
+		zend_error(E_ERROR, "Internal error", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 	qsufsort(I, V, old, oldsize);
@@ -296,20 +296,20 @@ PHP_FUNCTION( bsdiff_diff) {
 		(lseek(fd,0,SEEK_SET)!=0) ||
 		(read(fd,new,newsize)!=newsize) ||
 		(close(fd)==-1)) {
-		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error:%s", new_file);
+		zend_error(E_ERROR, "Internal error:%s", new_file);
 		RETURN_FALSE;
 	}
 
 	if(((db=malloc(newsize+1))==NULL) ||
 		((eb=malloc(newsize+1))==NULL)) {
-		zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Internal error", 0 TSRMLS_CC);
+		zend_error(E_ERROR, "Internal error", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 	dblen=0;
 	eblen=0;
 	/* Create the patch file */
 	if ((pf = fopen(diff_file, "w+")) == NULL) {
-		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error: can not create file(%s)", diff_file);
+		zend_error(E_ERROR, "Internal error: can not create file(%s)", diff_file);
 		RETURN_FALSE;
 	}
 
@@ -328,13 +328,13 @@ PHP_FUNCTION( bsdiff_diff) {
 	offtout(0, header + 16);
 	offtout(newsize, header + 24);
 	if (fwrite(header, 32, 1, pf) != 1) {
-		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error: fwrite(%s)", diff_file);
+		zend_error(E_ERROR, "Internal error: fwrite(%s)", diff_file);
 		RETURN_FALSE;
 	}
 
 	/* Compute the differences, writing ctrl as we go */
 	if ((pfbz2 = BZ2_bzWriteOpen(&bz2err, pf, 9, 0, 0)) == NULL) {
-		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "BZ2_bzWriteOpen, bz2err = %d", bz2err);
+		zend_error(E_ERROR, "BZ2_bzWriteOpen, bz2err = %d", bz2err);
 		RETURN_FALSE;
 	}
 	scan=0;len=0;
@@ -402,21 +402,21 @@ PHP_FUNCTION( bsdiff_diff) {
 			offtout(lenf,buf);
 			BZ2_bzWrite(&bz2err, pfbz2, buf, 8);
 			if (bz2err != BZ_OK) {
-				zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "BZ2_bzWrite, bz2err = %d", bz2err);
+				zend_error(E_ERROR, "BZ2_bzWrite, bz2err = %d", bz2err);
 				RETURN_FALSE;
 			}
 
 			offtout((scan-lenb)-(lastscan+lenf),buf);
 			BZ2_bzWrite(&bz2err, pfbz2, buf, 8);
 			if (bz2err != BZ_OK) {
-				zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "BZ2_bzWrite, bz2err = %d", bz2err);
+				zend_error(E_ERROR, "BZ2_bzWrite, bz2err = %d", bz2err);
 				RETURN_FALSE;
 			}
 
 			offtout((pos-lenb)-(lastpos+lenf),buf);
 			BZ2_bzWrite(&bz2err, pfbz2, buf, 8);
 			if (bz2err != BZ_OK) {
-				zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "BZ2_bzWrite, bz2err = %d", bz2err);
+				zend_error(E_ERROR, "BZ2_bzWrite, bz2err = %d", bz2err);
 				RETURN_FALSE;
 			}
 
@@ -428,67 +428,67 @@ PHP_FUNCTION( bsdiff_diff) {
 	BZ2_bzWriteClose(&bz2err, pfbz2, 0, NULL, NULL);
 
 	if (bz2err != BZ_OK) {
-		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "BZ2_bzWriteClose, bz2err = %d", bz2err);
+		zend_error(E_ERROR, "BZ2_bzWriteClose, bz2err = %d", bz2err);
 		RETURN_FALSE;
 	}
 
 	/* Compute size of compressed ctrl data */
 	if ((len = ftello(pf)) == -1) {
-		zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Internal error: ftello", 0 TSRMLS_CC);
+		zend_error(E_ERROR, "Internal error: ftello", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 	offtout(len-32, header + 8);
 
 	/* Write compressed diff data */
 	if ((pfbz2 = BZ2_bzWriteOpen(&bz2err, pf, 9, 0, 0)) == NULL) {
-		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "BZ2_bzWriteOpen, bz2err = %d", bz2err);
+		zend_error(E_ERROR, "BZ2_bzWriteOpen, bz2err = %d", bz2err);
 		RETURN_FALSE;
 	}
 	BZ2_bzWrite(&bz2err, pfbz2, db, dblen);
 	if (bz2err != BZ_OK) {
-		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "BZ2_bzWrite, bz2err = %d", bz2err);
+		zend_error(E_ERROR, "BZ2_bzWrite, bz2err = %d", bz2err);
 		RETURN_FALSE;
 	}
 	BZ2_bzWriteClose(&bz2err, pfbz2, 0, NULL, NULL);
 	if (bz2err != BZ_OK) {
-		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "BZ2_bzWriteClose, bz2err = %d", bz2err);
+		zend_error(E_ERROR, "BZ2_bzWriteClose, bz2err = %d", bz2err);
 		RETURN_FALSE;
 	}
 
 	/* Compute size of compressed diff data */
 	if ((newsize = ftello(pf)) == -1) {
-		zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Internal error: ftello", 0 TSRMLS_CC);
+		zend_error(E_ERROR, "Internal error: ftello", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 	offtout(newsize - len, header + 16);
 
 	/* Write compressed extra data */
 	if ((pfbz2 = BZ2_bzWriteOpen(&bz2err, pf, 9, 0, 0)) == NULL) {
-		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "BZ2_bzWriteOpen, bz2err = %d", bz2err);
+		zend_error(E_ERROR, "BZ2_bzWriteOpen, bz2err = %d", bz2err);
 		RETURN_FALSE;
 	}
 	BZ2_bzWrite(&bz2err, pfbz2, eb, eblen);
 	if (bz2err != BZ_OK) {
-		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "BZ2_bzWrite, bz2err = %d", bz2err);
+		zend_error(E_ERROR, "BZ2_bzWrite, bz2err = %d", bz2err);
 		RETURN_FALSE;
 	}
 	BZ2_bzWriteClose(&bz2err, pfbz2, 0, NULL, NULL);
 	if (bz2err != BZ_OK) {
-		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "BZ2_bzWriteClose, bz2err = %d", bz2err);
+		zend_error(E_ERROR, "BZ2_bzWriteClose, bz2err = %d", bz2err);
 		RETURN_FALSE;
 	}
 
 	/* Seek to the beginning, write the header, and close the file */
 	if (fseeko(pf, 0, SEEK_SET)) {
-		zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Internal error: fseeko", 0 TSRMLS_CC);
+		zend_error(E_ERROR, "Internal error: fseeko", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 	if (fwrite(header, 32, 1, pf) != 1) {
-		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Internal error: fwrite(%s)", diff_file);
+		zend_error(E_ERROR, "Internal error: fwrite(%s)", diff_file);
 		RETURN_FALSE;
 	}
 	if (fclose(pf)) {
-		zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Internal error: fclose", 0 TSRMLS_CC);
+		zend_error(E_ERROR, "Internal error: fclose", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 

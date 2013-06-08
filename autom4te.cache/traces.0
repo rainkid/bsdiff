@@ -281,9 +281,9 @@ m4trace:config.m4:32: -1- AC_DEFINE_TRACE_LITERAL([HAVE_BZ2])
 m4trace:config.m4:32: -1- m4_pattern_allow([^HAVE_BZ2$])
 m4trace:config.m4:32: -1- AH_OUTPUT([HAVE_BZ2], [/* */
 @%:@undef HAVE_BZ2])
-m4trace:config.m4:47: -1- AC_DEFINE_TRACE_LITERAL([COMPILE_DL_BSDIFF])
-m4trace:config.m4:47: -1- m4_pattern_allow([^COMPILE_DL_BSDIFF$])
-m4trace:config.m4:47: -1- AH_OUTPUT([COMPILE_DL_BSDIFF], [/* Whether to build bsdiff as dynamic module */
+m4trace:config.m4:46: -1- AC_DEFINE_TRACE_LITERAL([COMPILE_DL_BSDIFF])
+m4trace:config.m4:46: -1- m4_pattern_allow([^COMPILE_DL_BSDIFF$])
+m4trace:config.m4:46: -1- AH_OUTPUT([COMPILE_DL_BSDIFF], [/* Whether to build bsdiff as dynamic module */
 @%:@undef COMPILE_DL_BSDIFF])
 m4trace:configure.in:150: -1- AC_PROG_LIBTOOL
 m4trace:configure.in:150: -1- _m4_warn([obsolete], [The macro `AC_PROG_LIBTOOL' is obsolete.
