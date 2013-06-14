@@ -1,8 +1,0 @@
-bsdiff.lo: /home/rainkid/workspace/phpsrc/ext/bsdiff/bsdiff.c
-	$(LIBTOOL) --mode=compile $(CC)  -I. -I/home/rainkid/workspace/phpsrc/ext/bsdiff $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /home/rainkid/workspace/phpsrc/ext/bsdiff/bsdiff.c -o bsdiff.lo 
-$(phplibdir)/bsdiff.la: ./bsdiff.la
-	$(LIBTOOL) --mode=install cp ./bsdiff.la $(phplibdir)
-
-./bsdiff.la: $(shared_objects_bsdiff) $(BSDIFF_SHARED_DEPENDENCIES)
-	$(LIBTOOL) --mode=link $(CC) $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS) $(LDFLAGS) -o $@ -export-dynamic -avoid-version -prefer-pic -module -rpath $(phplibdir) $(EXTRA_LDFLAGS) $(shared_objects_bsdiff) $(BSDIFF_SHARED_LIBADD)
-
